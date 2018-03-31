@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script type="text/javascript" src="js/three.min.js"></script>
+  <script type="text/javascript" src="js/STLLoader.js"></script>
+  <script type="text/javascript" src="js/OrbitControls.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="output"></div>
+  <script type="text/javascript">
+    const scene = new THREE.Scene();
+    // const camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 1, 1000);
+    let width = window.innerWidth / 4;
+    let height = window.innerHeight / 4;
+    const camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(0xdddddd);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    camera.position.x = 0;
+    camera.position.y = 0;
+    camera.position.z = 50;
+
+    camera.lookAt(scene.position);
+
+    // const dirLight = new THREE.DirectionalLight(0xffffff);
+    // dirLight.position.set(200, 200, 1000).normalize();
+    // camera.add(dirLight);
+    // camera.add(dirLight.target);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.75;
+    controls.enableZoom = true;
+
+    document.getElementById("output").appendChild(renderer.domElement);
+
+    const axes = new THREE.AxisHelper(100);
+    scene.add(axes);
+
+    var loader = new THREE.STLLoader();
+    loader.load("./model/stl/right-kidney.stl", function (geometry) {
+      const material = new THREE.MeshNormalMaterial();
+      // const material = new THREE.MeshLambertMaterial( { color:0xffffff, side: THREE.DoubleSide } );
+      mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(40, -70, -20);
+      // mesh.rotation.set( 0, Math.PI, 0 );
+      mesh.scale.set(0.3, 0.3, 0.3);
+      scene.add(mesh);
+    });
+    loader.load("./model/stl/left-kidney.stl", function (geometry) {
+      const material = new THREE.MeshNormalMaterial();
+      mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(-15, -40, -60);
+      mesh.rotation.set( Math.PI/2, Math.PI, 0);
+      mesh.scale.set(0.3, 0.3, 0.3);
+      scene.add(mesh);
+    });
+    loader.load("./model/stl/bones.stl", function (geometry) {
+      const material = new THREE.MeshNormalMaterial();
+      mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(0, -20, 50);
+      mesh.rotation.set(Math.PI/2, Math.PI, Math.PI);
+      mesh.scale.set(0.3, 0.3, 0.3);
+      scene.add(mesh);
+    });
+    loader.load("./model/stl/veins.stl", function (geometry) {
+      const material = new THREE.MeshNormalMaterial();
+      mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(0, -20, 50);
+      mesh.rotation.set(Math.PI/2, Math.PI, Math.PI);
+      mesh.scale.set(0.3, 0.3, 0.3);
+      scene.add(mesh);
+    });
+    loader.load("./model/stl/arterial.stl", function (geometry) {
+      const material = new THREE.MeshNormalMaterial();
+      mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(0, -20, 50);
+      mesh.rotation.set(Math.PI/2, Math.PI, Math.PI);
+      mesh.scale.set(0.3, 0.3, 0.3);
+      scene.add(mesh);
+    });
+    render();
+    function render() {
+      requestAnimationFrame(render);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+
+</html>
