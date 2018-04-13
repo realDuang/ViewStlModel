@@ -3,81 +3,131 @@
 
 <head>
   <script type="text/javascript" src="asset/three.min.js"></script>
-  <script type="text/javascript" src="asset/jquery.min.js"></script>
   <script type="text/javascript" src="asset/STLLoader.js"></script>
   <script type="text/javascript" src="asset/OrbitControls.js"></script>
+  <script type="text/javascript" src="asset/weui/lib/jquery-2.1.4.js"></script>
   <script type="text/javascript" src="asset/weui/js/jquery-weui.min.js"></script>
+  <link rel="stylesheet" href="asset/weui/lib/weui.min.css">
   <link rel="stylesheet" href="asset/weui/css/jquery-weui.min.css">
   <style>
+    html,
     body {
-      margin: 0;
-      overflow: hidden;
+      height: 100%;
+    }
+
+    .headline {
+      height: 50px;
+      width: 100%;
+      position: absolute;
+      top: 0;
+    }
+
+    #webglDisplay {
+      width: 100%;
+      position: absolute;
+      top: 50px;
+      bottom: 50px;
+      /* overflow: auto; */
+    }
+
+    .footline {
+      height: 50px;
+      line-height: 50px;
+      width: 100%;
+      position: absolute;
+      bottom: 0;
     }
   </style>
 </head>
 
 <body>
-  <div id="container"></div>
+  <div class="weui-flex headline">
+    <div class="weui-flex__item">
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">隐藏的器官</label>
+        </div>
+        <div class="weui-cell__bd">
+          <input id="part_display_btn" class="weui-input" type="string" placeholder="还未选择任何器官">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="weui-flex" id="webglDisplay">
+    <div class="weui-flex__item">
+      <div id="container"></div>
+    </div>
+  </div>
+  <div class="weui-flex footline">
+    <div class="weui-flex__item">
+      <div class="weui-footer">
+        <p class="weui-footer__text">Copyright © 2014-2018 chenglong</p>
+      </div>
+    </div>
+  </div>
+
+
   <script type="text/javascript">
-  // 设置场景
+    let width = $('#webglDisplay').width();
+    let height = $('#webglDisplay').height();
+
+    // 设置场景
     const scene = new THREE.Scene();
     const renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(0xdddddd);
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor("#eee");
+    renderer.setSize(width, height);
     $('#container').append(renderer.domElement);
 
-  // 设置相机
+    // 设置相机
     // const camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 1, 1000);
-    let width = window.innerWidth / 4;
-    let height = window.innerHeight / 4;
-    const camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 1, 500);
+    const camera = new THREE.OrthographicCamera(width / - 8, width / 8, height / 8, height / - 8, 1, 500);
     camera.position.set(0, 100, 0);
     camera.up.set(0, 0, 1);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-  // 设置灯光
-    const ambient = new THREE.AmbientLight(0x999999);
+    // 设置灯光
+    const ambient = new THREE.AmbientLight("#999");
     scene.add(ambient); //设置全局光
     // const directionalLight = new THREE.DirectionalLight(0x333333);
     // directionalLight.position.set(-2, 9, 1).normalize();//设置平行光方向
     // scene.add(directionalLight);
-    const pointlight_1 = new THREE.PointLight(0xffffff, 1, 3000);
+    const pointlight_1 = new THREE.PointLight("#fff", 1, 3000);
     pointlight_1.position.set(0, 0, 2000);//设置点光源位置
     scene.add(pointlight_1);
-    const pointlight_2 = new THREE.PointLight(0xffffff, 1, 2000);
+    const pointlight_2 = new THREE.PointLight("#fff", 1, 2000);
     pointlight_2.position.set(-1000, 1000, 1000);
     scene.add(pointlight_2);
-    const pointlight_3 = new THREE.PointLight(0xffffff, 1, 3000);
+    const pointlight_3 = new THREE.PointLight("#fff", 1, 3000);
     pointlight_3.position.set(0, 0, -2000);
     scene.add(pointlight_3);
-    const pointlight_4 = new THREE.PointLight(0xffffff, 1, 2000);
+    const pointlight_4 = new THREE.PointLight("#fff", 1, 2000);
     pointlight_4.position.set(-2000, 0, 0);
     scene.add(pointlight_4);
-    const pointlight_5 = new THREE.PointLight(0xffffff, 1, 2000);
+    const pointlight_5 = new THREE.PointLight("#fff", 1, 2000);
     pointlight_5.position.set(0, -2000, 0);
     scene.add(pointlight_5);
 
-  // 设置轨道控制
+    // 设置轨道控制
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 1;
     controls.enableZoom = true;
     controls.enablePan = true;
 
-  // 设置辅助线
+    // 设置辅助线
     // const axis = new THREE.AxisHelper(30);
     // scene.add(axis);
 
-    modelLoader(scene, "./model/stl/right-kidney.stl", 0x990000);
-    modelLoader(scene, "./model/stl/left-kidney.stl", 0x990000);
-    modelLoader(scene, "./model/stl/bones.stl", 0xffffff);
-    modelLoader(scene, "./model/stl/veins.stl", 0x0000ff);
-    modelLoader(scene, "./model/stl/arterial.stl", 0xff0000);
+    // modelLoader(scene, "./model/stl/right-kidney.stl", 0x990000);
+    // modelLoader(scene, "./model/stl/left-kidney.stl", 0x990000);
+    // modelLoader(scene, "./model/stl/bones.stl", 0xffffff);
+    // modelLoader(scene, "./model/stl/veins.stl", 0x0000ff);
+    // modelLoader(scene, "./model/stl/arterial.stl", 0xff0000);
 
     render();
 
     // 模型加载
-    function modelLoader(scene, src, color) {
+    function modelLoader(scene, name, src, color) {
       const loader = new THREE.STLLoader();
       loader.load(src, function (geometry) {
         const material = new THREE.MeshLambertMaterial({ color: color });
@@ -85,6 +135,7 @@
         mesh.translateX(5);
         mesh.translateY(-50);
         mesh.translateZ(-20);
+        mesh.name = name;
         mesh.scale.set(0.3, 0.3, 0.3);
         scene.add(mesh);
       });
@@ -95,6 +146,33 @@
       controls.update();
       renderer.render(scene, camera);
     }
+
+    $("#part_display_btn").select({
+      title: "请选择需要隐藏的器官",
+      multi: true,
+      split: "，",
+      items: [],
+      onClose: function changeDisplay(cb) {
+        console.log(cb, cb.config.items, cb.data.origins);
+        cb.config.items.forEach(function (item) {
+          scene.getObjectByName(item.value).visible = true;
+        })
+        cb.data.origins.forEach(function (item) {
+          scene.getObjectByName(item.value).visible = false;
+        })
+      }
+    });
+
+    $.getJSON("./config.json", function (data) {
+      let menuData = [];
+      menuData = data.menuData;
+      $("#part_display_btn").select("update", {
+        items: menuData
+      });
+      menuData.forEach(function (item) {
+        modelLoader(scene, item.value, item.src, item.color);
+      })
+    });
   </script>
 
 </body>

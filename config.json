@@ -1,0 +1,49 @@
+{
+  "status": 0,
+  "msg": "SUCCESS",
+  "menuData": [
+    {
+      "title": "动脉血管",
+      "value": "arteial",
+      "src": "./model/stl/arterial.stl",
+      "color": "#ff0000",
+      "checked": true
+    },
+    {
+      "title": "静脉系",
+      "value": "veins",
+      "src": "./model/stl/veins.stl",
+      "color": "#0000ff"
+    },
+    {
+      "title": "骨骼",
+      "value": "bones",
+      "src": "./model/stl/bones.stl",
+      "color": "#ffffff"
+    },
+    {
+      "title": "左肾脏",
+      "value": "left-kidney",
+      "src": "./model/stl/left-kidney.stl",
+      "color": "#990000"
+    },
+    {
+      "title": "右肾脏",
+      "value": "right-kidney",
+      "src": "./model/stl/right-kidney.stl",
+      "color": "#990000"
+    },
+    {
+      "title": "钙化",
+      "value": "calcification",
+      "src": "./model/stl/calcification.stl",
+      "color": "#ffffff"
+    },
+    {
+      "title": "坏死",
+      "value": "necrosis",
+      "src": "./model/stl/necrosis.stl",
+      "color": "#660000"
+    }
+  ]
+}
