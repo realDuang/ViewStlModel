@@ -37,7 +37,7 @@
       "title": "钙化",
       "value": "calcification",
       "src": "./model/stl/calcification.stl",
-      "color": "#ffffff"
+      "color": "#ffff00"
     },
     {
       "title": "坏死",

@@ -2,6 +2,8 @@
 <html>
 
 <head>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+  />
   <script type="text/javascript" src="asset/three.min.js"></script>
   <script type="text/javascript" src="asset/STLLoader.js"></script>
   <script type="text/javascript" src="asset/OrbitControls.js"></script>
@@ -16,7 +18,7 @@
     }
 
     .headline {
-      height: 50px;
+      height: 2rem;
       width: 100%;
       position: absolute;
       top: 0;
@@ -25,14 +27,14 @@
     #webglDisplay {
       width: 100%;
       position: absolute;
-      top: 50px;
-      bottom: 50px;
+      top: 2rem;
+      bottom: 2rem;
       /* overflow: auto; */
     }
 
     .footline {
-      height: 50px;
-      line-height: 50px;
+      height: 2rem;
+      line-height: 2rem;
       width: 100%;
       position: absolute;
       bottom: 0;
@@ -118,13 +120,34 @@
     // const axis = new THREE.AxisHelper(30);
     // scene.add(axis);
 
-    // modelLoader(scene, "./model/stl/right-kidney.stl", 0x990000);
-    // modelLoader(scene, "./model/stl/left-kidney.stl", 0x990000);
-    // modelLoader(scene, "./model/stl/bones.stl", 0xffffff);
-    // modelLoader(scene, "./model/stl/veins.stl", 0x0000ff);
-    // modelLoader(scene, "./model/stl/arterial.stl", 0xff0000);
-
     render();
+
+
+    $("#part_display_btn").select({
+      title: "请选择需要隐藏的器官",
+      multi: true,
+      // split: "，",
+      items: [],
+      onClose: function changeDisplay(cb) {
+        cb.config.items.forEach(function (item) {
+          scene.getObjectByName(item.value).visible = true;
+        })
+        cb.data.origins.forEach(function (item) {
+          scene.getObjectByName(item.value).visible = false;
+        })
+      }
+    });
+
+    $.getJSON("./config.json", function (data) {
+      let menuData = [];
+      menuData = data.menuData;
+      $("#part_display_btn").select("update", {
+        items: menuData
+      });
+      menuData.forEach(function (item) {
+        modelLoader(scene, item.value, item.src, item.color);
+      })
+    });
 
     // 模型加载
     function modelLoader(scene, name, src, color) {
@@ -147,32 +170,47 @@
       renderer.render(scene, camera);
     }
 
-    $("#part_display_btn").select({
-      title: "请选择需要隐藏的器官",
-      multi: true,
-      split: "，",
-      items: [],
-      onClose: function changeDisplay(cb) {
-        console.log(cb, cb.config.items, cb.data.origins);
-        cb.config.items.forEach(function (item) {
-          scene.getObjectByName(item.value).visible = true;
-        })
-        cb.data.origins.forEach(function (item) {
-          scene.getObjectByName(item.value).visible = false;
-        })
-      }
-    });
+    function onDocumentMouseDown(e) {
+      e.preventDefault();
 
-    $.getJSON("./config.json", function (data) {
-      let menuData = [];
-      menuData = data.menuData;
-      $("#part_display_btn").select("update", {
-        items: menuData
-      });
-      menuData.forEach(function (item) {
-        modelLoader(scene, item.value, item.src, item.color);
-      })
-    });
+      //将鼠标点击位置的屏幕坐标转成threejs中的标准坐标,具体解释见代码释义
+      // mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      // mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      mouse.x = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.touches[0].pageY / window.innerHeight) * 2 + 1;
+      //新建一个三维单位向量 假设z方向就是0.5
+      //根据照相机，把这个向量转换到视点坐标系
+      var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5).unproject(camera);
+
+      //在视点坐标系中形成射线,射线的起点向量是照相机， 射线的方向向量是照相机到点击的点，这个向量应该归一标准化。
+      var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+
+      //射线和模型求交，选中一系列直线
+      var intersects = raycaster.intersectObjects(objects);
+      console.log('imtersrcts=' + intersects)
+
+      if (intersects.length > 0) {
+        //选中第一个射线相交的物体
+        SELECTED = intersects[0].object;
+        var intersected = intersects[0].object;
+        console.log(intersects[0].object)
+      }
+    }
+
+    let raycaster = new THREE.Raycaster();
+    let mouse = new THREE.Vector2();
+    function pickupObjects(e) {
+      //将鼠标点击位置的屏幕坐标转成threejs中的标准坐标
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      //从相机发射一条射线，经过鼠标点击位置
+      raycaster.setFromCamera(mouse, camera);
+      //计算射线相机到的对象，可能有多个对象，因此返回的是一个数组，按离相机远近排列
+      let intersects = raycaster.intersectObjects(scene.children);
+      for (var i = 0; i < intersects.length; i++) {
+        intersects[i].object.material.color.set(0x00ff00);
+      }
+    }
   </script>
 
 </body>
