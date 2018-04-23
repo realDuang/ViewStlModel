@@ -6,8 +6,7 @@
       "title": "动脉血管",
       "value": "arteial",
       "src": "./model/stl/arterial.stl",
-      "color": "#ff0000",
-      "checked": true
+      "color": "#ff0000"
     },
     {
       "title": "静脉系",
@@ -19,7 +18,7 @@
       "title": "骨骼",
       "value": "bones",
       "src": "./model/stl/bones.stl",
-      "color": "#ffffff"
+      "color": "#dddddd"
     },
     {
       "title": "左肾脏",
